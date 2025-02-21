@@ -13,7 +13,11 @@ resource "aws_iam_role" "role" {
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attachment" {
-  for_each   = toset(var.policy_arns)
+  for_each = zipmap(
+    [for idx in range(length(var.policy_arns)) : "policy-${idx}"],
+    var.policy_arns
+  )
+
   role       = aws_iam_role.role.name
   policy_arn = each.value
 }
